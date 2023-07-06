@@ -1,2 +1,2 @@
 # Sorteio_CDD
- Tecnologias utilizadas: React, Tailwind
+ Tecnologias python, flutter
