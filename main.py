@@ -1,12 +1,109 @@
 from flet import *
 def router(page:Page):
-    page.title = Text("Home")
-    alunos = ["maria"]
+    page.title = "Sorteio"
+    alunos = ["maria","joao"]
 
-    def cadastrar():
-        name =TextField.key("teste")
-        alunos.append(name)
+    def fechar_banner(e):
+        page.banner.open = False
+        page.update()
+
+    def excluirAluno(a):
+
+        listExcluirAluno()
+
+    lv = ListView(expand=1,spacing=10,item_extent=50)
+
+    def listAlunos():
+        lv.controls.clear()
+        for i in range(len(alunos)):
+            lv.controls.append(
+                Container(
+                    Text(f"{alunos[i]}"),
+                    alignment=alignment.center,
+                    bgcolor=colors.AMBER_100,
+                    border=border.all(2, colors.AMBER_400),
+                    padding=5,
+                    margin=2
+                )
+            )
+
+        page.update()
+
+
+
+    def listExcluirAluno():
+        lv.controls.clear()
+        for i in range(len(alunos)):
+            lv.controls.append(
+                Container(
+                    Text(alunos[i],color=colors.RED_400),
+                    on_click=excluirAluno,
+                    alignment=alignment.center,
+                    bgcolor=colors.AMBER_100,
+                    border=border.all(2, colors.AMBER_400),
+                    padding=5,
+                    margin=2,
+                )
+            )
+
+        page.update()
+
+    bannervazio = Banner(
+        bgcolor=colors.AMBER_100,
+        leading=Icon(icons.DANGEROUS_SHARP, color=colors.RED_400, size=40),
+        content=Text(
+            "O Campo abaixo deve ser preenchido"
+        ),
+        actions=[
+            TextButton("OK", on_click=fechar_banner),
+        ],
+    )
+
+    bannerjaexistente = Banner(
+        bgcolor=colors.AMBER_100,
+        leading=Icon(icons.DANGEROUS_SHARP, color=colors.RED_400, size=40),
+        content=Text(
+            "Nome já existente"
+        ),
+        actions=[
+            TextButton("OK", on_click=fechar_banner),
+        ],
+    )
+
+    bannerfinalizado = Banner(
+        bgcolor=colors.GREEN_400,
+        leading=Icon(icons.DANGEROUS_SHARP, color=colors.RED_400, size=40),
+        content=Text(
+            "Nome Adicionado"
+        ),
+        actions=[
+            TextButton("OK", on_click=fechar_banner),
+        ],
+    )
+
+    name = TextField(label="Nome", autofocus=True)
+    def validacaoNome(name):
+        for n in alunos:
+            if n.__eq__(name):
+                page.banner = bannerjaexistente
+                page.banner.open = True
+                page.update()
+                break
+        else:
+            if not name:
+                page.banner = bannervazio
+                page.banner.open = True
+                page.update()
+            else:
+                alunos.append(name)
+                page.banner = bannerfinalizado
+                page.banner.open = True
+                page.update()
+
+    def cadastrar(e):
+        validacaoNome(name.value)
         print(alunos)
+
 
 
     def mudancaderotas(route):
@@ -24,8 +121,10 @@ def router(page:Page):
                         [
                             ElevatedButton(text="Adicionar Aluno", color=colors.ORANGE_500,
                                            on_click=lambda _: page.go("/addaluno")),
-                            ElevatedButton(text="Remover Aluno", color=colors.ORANGE_500),
-                            ElevatedButton(text="Listar Alunos", color=colors.ORANGE_500),
+                            ElevatedButton(text="Listar Alunos", color=colors.ORANGE_500,
+                                           on_click=lambda _: page.go("/listAluno")),
+                            ElevatedButton(text="Remover Aluno", color=colors.ORANGE_500,
+                                           on_click= lambda _:page.go("/deleteAluno")),
                         ],
                         alignment=MainAxisAlignment.CENTER,
                     ),
@@ -61,16 +160,47 @@ def router(page:Page):
                             title=Text("Cadastro", color=colors.WHITE),
                             center_title=True,
                             bgcolor=colors.BLUE_400),
+
                         Row(
-                            [
-                                TextField(label="Nome",key="teste"),
-                                ElevatedButton("Adicionar Aluno",on_click=cadastrar())
+                            controls = [
+                                name,
+                                ElevatedButton("Adicionar Aluno",on_click=cadastrar)
                             ],
                             alignment=MainAxisAlignment.CENTER,
                         ),
 
+                    ]
+                )
+            )
+        elif page.route == "/listAluno":
+            listAlunos()
+            page.views.append(
+                View(
+                    "/listAluno",
+                    [
 
+                        AppBar(
+                            leading_width=40,
+                            title=Text("Lista de Alunos", color=colors.WHITE),
+                            center_title=True,
+                            bgcolor=colors.BLUE_400),
+                        lv
+                    ]
+                )
+            )
+        elif page.route == "/deleteAluno":
+            listExcluirAluno()
+            page.views.append(
+                View(
+                    "/deleteAluno",
+                    [
+                        AppBar(
+                            leading_width=40,
+                            title=Text("Remover Aluno", color=colors.WHITE),
+                            center_title=True,
+                            bgcolor=colors.BLUE_400),
 
+                        lv
                     ]
                 )
             )
