@@ -7,7 +7,7 @@ def router(page:Page):
     page.title = "Sorteio"
     page.theme_mode = ThemeMode.LIGHT
 
-    alunos = ["JOAO","HELEN","MARCUS","INAJA","LILLIAN","BARBARA","DEBORA","GABRIEL","MANUELA","VANESSA","ANDERSON MINEIRO","ANDERSON IBURA","GERALDO","THIAGO Y","THIAGO H","SABRINA","MARIA CLARA",""]
+    alunos = ["JOAO","HELEN","MARCUS","INAJA","LILLIAN","BARBARA","DEBORA","GABRIEL","MANUELA","VANESSA","ANDERSON MINEIRO","ANDERSON IBURA","GERALDO","THIAGO Y","THIAGO H","SABRINA","MARIA CLARA"]
     participantes_sorteio = []
 
     lv = ListView(expand=1,
@@ -40,7 +40,6 @@ def router(page:Page):
                 print(ValueError)
         elif e.control.value:
             participantes_sorteio.append(e.control.label)
-
         print(participantes_sorteio)
 
     def listClassificados():
@@ -63,17 +62,32 @@ def router(page:Page):
                 pesq.append(alunos[i])
 
         lv.controls.clear()
+        ind = 0
         for i in range(len(pesq)):
-            lv.controls.append(
-                Container(
-                    Text(f"{pesq[i]}"),
-                    alignment=alignment.center,
-                    bgcolor=colors.AMBER_100,
-                    border=border.all(2, colors.AMBER_400),
-                    padding=5,
-                    margin=2
+            if ind == 0:
+                ind = 1
+                lv.controls.append(
+                    Container(
+                        Text(f"{pesq[i]}"),
+                        alignment=alignment.center,
+                        bgcolor=colors.GREY_400,
+                        border=border.all(2, colors.GREY_500),
+                        padding=5,
+                        margin=2
+                    )
                 )
-            )
+            else:
+                ind = 0
+                lv.controls.append(
+                    Container(
+                        Text(f"{pesq[i]}"),
+                        alignment=alignment.center,
+                        bgcolor=colors.GREY_200,
+                        border=border.all(2, colors.GREY_300),
+                        padding=5,
+                        margin=2
+                    )
+                )
 
         page.update()
 
@@ -114,6 +128,8 @@ def router(page:Page):
             page.update()
             sleepBanner()
         elif alunoPesquisa.value.upper() not in alunos:
+            alunoPesquisa.value = ""
+            page.update()
             page.banner = bannernaoexistente
             page.banner.open = True
             page.update()
@@ -123,6 +139,8 @@ def router(page:Page):
                 if i.__eq__(alunoPesquisa.value.upper()):
                     alunos.remove(i)
                     break
+            alunoPesquisa.value = ""
+            page.update()
             listExcluirAluno()
             page.banner = bannerAlunoExcluido
             page.banner.open = True
@@ -131,33 +149,62 @@ def router(page:Page):
 
     def listAlunos():
         lv.controls.clear()
+        ind = 0
         for i in range(len(alunos)):
-            lv.controls.append(
-                Container(
-                    Text(f"{alunos[i]}"),
-                    alignment=alignment.center,
-                    bgcolor=colors.AMBER_100,
-                    border=border.all(2, colors.AMBER_400),
-                    padding=5,
-                    margin=2
+            if ind == 0:
+                ind = 1
+                lv.controls.append(
+                    Container(
+                        Text(f"{alunos[i]}"),
+                        alignment=alignment.center,
+                        bgcolor=colors.GREY_400,
+                        border=border.all(2, colors.GREY_500),
+                        padding=5,
+                        margin=2
+                    )
                 )
-            )
-
+            else:
+                ind = 0
+                lv.controls.append(
+                    Container(
+                        Text(f"{alunos[i]}"),
+                        alignment=alignment.center,
+                        bgcolor=colors.GREY_200,
+                        border=border.all(2, colors.GREY_300),
+                        padding=5,
+                        margin=2
+                    )
+                )
         page.update()
 
     def listExcluirAluno():
         lv.controls.clear()
+        ind = 0
         for i in range(len(alunos)):
-            lv.controls.append(
-                Container(
-                    Text(alunos[i],color=colors.RED_400),
-                    alignment=alignment.center,
-                    bgcolor=colors.AMBER_100,
-                    border=border.all(2, colors.AMBER_400),
-                    padding=5,
-                    margin=2,
+            if ind == 0:
+                ind = 1
+                lv.controls.append(
+                    Container(
+                        Text(value=f"{alunos[i]}"),
+                        alignment=alignment.center,
+                        bgcolor=colors.GREY_400,
+                        border=border.all(2, colors.GREY_500),
+                        padding=5,
+                        margin=2
+                    )
                 )
-            )
+            else:
+                ind = 0
+                lv.controls.append(
+                    Container(
+                        Text(value=f"{alunos[i]}"),
+                        alignment=alignment.center,
+                        bgcolor=colors.GREY_200,
+                        border=border.all(2, colors.GREY_300),
+                        padding=5,
+                        margin=2
+                    )
+                )
 
         page.update()
 
@@ -168,7 +215,7 @@ def router(page:Page):
             "O Campo abaixo deve ser preenchido"
         ),
         actions=[
-            TextButton("OK", on_click=fechar_banner),
+            TextButton("OK",style=ButtonStyle(color=colors.AMBER_300), on_click=fechar_banner),
         ],
     )
 
@@ -179,18 +226,19 @@ def router(page:Page):
             "Aluno(a) já existente"
         ),
         actions=[
-            TextButton("OK", on_click=fechar_banner),
+            TextButton("OK", style=ButtonStyle(color=colors.AMBER_300),on_click=fechar_banner),
         ],
     )
 
     bannerfinalizado = Banner(
-        bgcolor=colors.GREEN_400,
+        bgcolor=colors.GREEN_200,
         leading=Icon(icons.DANGEROUS_SHARP, color=colors.RED_400, size=40),
         content=Text(
-            "Aluno(a) Adicionado"
+            value="Aluno(a) Adicionado",
+            color=colors.WHITE
         ),
         actions=[
-            TextButton("OK", on_click=fechar_banner),
+            TextButton("OK", style=ButtonStyle(color=colors.GREEN_400),on_click=fechar_banner),
         ],
     )
 
@@ -201,7 +249,7 @@ def router(page:Page):
             "Aluno(a) Excluido "
         ),
         actions=[
-            TextButton("OK", on_click=fechar_banner),
+            TextButton("OK", style=ButtonStyle(color=colors.AMBER_300), on_click=fechar_banner),
         ],
     )
 
@@ -212,7 +260,7 @@ def router(page:Page):
             "Aluno(a) não encontrado"
         ),
         actions=[
-            TextButton("OK", on_click=fechar_banner),
+            TextButton("OK", style=ButtonStyle(color=colors.AMBER_300), on_click=fechar_banner),
         ],
     )
 
@@ -223,36 +271,38 @@ def router(page:Page):
             "Valor Inválido"
         ),
         actions=[
-            TextButton("OK", on_click=fechar_banner),
+            TextButton("OK", style=ButtonStyle(color=colors.AMBER_300), on_click=fechar_banner),
         ],
     )
 
     name = TextField(label="Nome", autofocus=True)
 
-    def validacaoNome(name):
+    def validacaoNome(nm):
+        name.value = ""
+        page.update()
         for n in alunos:
-            if n.__eq__(name.upper()):
+            if n.__eq__(nm.upper()):
                 page.banner = bannerjaexistente
                 page.banner.open = True
                 page.update()
                 sleepBanner()
                 break
         else:
-            if not name:
+            if not nm:
                 page.banner = bannervazio
                 page.banner.open = True
                 page.update()
                 sleepBanner()
             else:
-                alunos.append(name.upper())
+                alunos.append(nm.upper())
                 page.banner = bannerfinalizado
                 page.banner.open = True
                 page.update()
                 sleepBanner()
 
+
     def cadastrar(e):
         validacaoNome(name.value)
-        print(alunos)
 
     count_txt = Text(value="3", weight=10, color=colors.YELLOW_400,size=200)
     def iniSorteio():
@@ -281,6 +331,7 @@ def router(page:Page):
         print(len(participantes_sorteio))
         listGanhadores()
         lrs.visible = True
+        qtdLanche.value = ""
 
     def validacaoSorteio(e):
         if not qtdLanche.value:
@@ -289,6 +340,8 @@ def router(page:Page):
             page.update()
             sleepBanner()
         elif len(participantes_sorteio)<1:
+            qtdLanche.value = ""
+            page.update()
             page.banner = bannervazio
             page.banner.open = True
             page.update()
@@ -297,6 +350,8 @@ def router(page:Page):
             try:
                 qtd = int(qtdLanche.value)
             except ValueError:
+                qtdLanche.value = ""
+                page.update()
                 page.banner = bannerInvalido
                 page.banner.open = True
                 page.update()
