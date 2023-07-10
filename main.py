@@ -7,7 +7,7 @@ def router(page:Page):
     page.title = "Sorteio"
     page.theme_mode = ThemeMode.LIGHT
 
-    alunos = ["JOAO","HELEN","MARCUS","INAJA","LILLIAN","BARBARA","DEBORA","GABRIEL","MANUELA","VANESSA","ANDERSON MINEIRO","ANDERSON IBURA","GERALDO","THIAGO Y","THIAGO H"]
+    alunos = ["JOAO","HELEN","MARCUS","INAJA","LILLIAN","BARBARA","DEBORA","GABRIEL","MANUELA","VANESSA","ANDERSON MINEIRO","ANDERSON IBURA","GERALDO","THIAGO Y","THIAGO H","SABRINA","MARIA CLARA",""]
     participantes_sorteio = []
 
     lv = ListView(expand=1,
@@ -21,6 +21,16 @@ def router(page:Page):
         child_aspect_ratio=1.0,
         run_spacing=5,
         auto_scroll=True)
+
+    lrs = DataTable(
+        expand=True,
+        border=border.all(color=colors.BLACK),
+        columns=[
+            DataColumn(Text(value="Nomes"))
+        ],
+        rows=[]
+    )
+
 
     def verifParticipantes(e):
         if not e.control.value:
@@ -66,36 +76,6 @@ def router(page:Page):
             )
 
         page.update()
-
-    c1 = Container(
-        Text("1", style=TextThemeStyle.HEADLINE_MEDIUM,weight=5),
-        alignment=alignment.center,
-        width=200,
-        height=200,
-        bgcolor=colors.TRANSPARENT,
-    )
-    c2 = Container(
-        Text("2", size=50,weight=5),
-        alignment=alignment.center,
-        width=200,
-        height=200,
-        bgcolor=colors.TRANSPARENT,
-    )
-    c3 = Container(
-        Text("3", size=50,weight=5),
-        alignment=alignment.center,
-        width=200,
-        height=200,
-        bgcolor=colors.TRANSPARENT,
-    )
-    c = AnimatedSwitcher(
-        c1,
-        transition=AnimatedSwitcherTransition.SCALE,
-        duration=500,
-        reverse_duration=100,
-        switch_in_curve=AnimationCurve.BOUNCE_OUT,
-        switch_out_curve=AnimationCurve.BOUNCE_IN,
-    )
 
     alunoPesquisa = TextField(
         label="Pesquisar",
@@ -280,19 +260,35 @@ def router(page:Page):
             count_txt.value = str(i)
             page.update()
             sleep(1)
+        count_txt.visible = False
         defsorteados()
 
     sorteadosResult = []
     def defsorteados():
-        for i in range(0,int(qtdLanche.value)):
-            num = randint(0,len(participantes_sorteio))
-            for i in range(0,len(participantes_sorteio)):
-                if num == i:
-                    ganhador = participantes_sorteio[i]
-                    sorteadosResult.append(ganhador)
-        print(sorteadosResult)
-    def validacaoQtd(e):
+        while((len(sorteadosResult)) != int(qtdLanche.value)):
+            num = randint(0,len(participantes_sorteio)-1)
+            if (len(participantes_sorteio)) > int(qtdLanche.value):
+                if participantes_sorteio[num] in sorteadosResult:
+                    continue
+                ganhador = participantes_sorteio[num]
+                sorteadosResult.append(ganhador)
+            elif (len(participantes_sorteio)) < int(qtdLanche.value):
+                ganhador = participantes_sorteio[num]
+                sorteadosResult.append(ganhador)
+            else:
+                for i in participantes_sorteio:
+                    sorteadosResult.append(i)
+        print(len(participantes_sorteio))
+        listGanhadores()
+        lrs.visible = True
+
+    def validacaoSorteio(e):
         if not qtdLanche.value:
+            page.banner = bannervazio
+            page.banner.open = True
+            page.update()
+            sleepBanner()
+        elif len(participantes_sorteio)<1:
             page.banner = bannervazio
             page.banner.open = True
             page.update()
@@ -308,6 +304,16 @@ def router(page:Page):
                 return
 
             page.go("/resultado")
+
+    def listGanhadores():
+        for i in sorteadosResult:
+            lrs.rows.append(
+                DataRow(
+                    cells=[
+                        DataCell(Text(value=i))
+                    ],
+                )
+            )
 
     def mudancaderotas(route):
         page.views.clear()
@@ -439,8 +445,11 @@ def router(page:Page):
                 )
             )
         elif page.route == "/sorteio":
+            lrs.rows.clear()
+            lrs.visible = False
             participantes_sorteio.clear()
             sorteadosResult.clear()
+            count_txt.visible=True
             listClassificados()
             page.views.append(
                 View(
@@ -465,7 +474,7 @@ def router(page:Page):
                         Row(
                             controls=[
                                 qtdLanche,
-                                ElevatedButton(text="Sortear", color=colors.WHITE, bgcolor=colors.ORANGE, on_click= validacaoQtd)
+                                ElevatedButton(text="Sortear", color=colors.WHITE, bgcolor=colors.ORANGE, on_click= validacaoSorteio)
                             ],
                             alignment= MainAxisAlignment.CENTER,
                         )
@@ -487,13 +496,16 @@ def router(page:Page):
                         Row(
                             controls=[
                                 count_txt,
+                                lrs
                             ],
                             alignment=MainAxisAlignment.CENTER
                         ),
-                    ]
+
+                    ],scroll=True
                 )
             )
             iniSorteio()
+
 
         page.update()
 
