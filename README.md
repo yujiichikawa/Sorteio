@@ -1,2 +1,2 @@
-# Sorteio_CDD
+# Sorteio
  Tecnologias python, flutter
