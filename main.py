@@ -7,7 +7,7 @@ def router(page:Page):
     page.title = "Sorteio"
     page.theme_mode = ThemeMode.LIGHT
 
-    alunos = ["JOAO","HELEN","MARCUS","INAJA","LILLIAN","BARBARA","DEBORA","GABRIEL","MANUELA","VANESSA","ANDERSON MINEIRO","ANDERSON IBURA","GERALDO","THIAGO Y","THIAGO H","SABRINA","MARIA CLARA"]
+    alunos = []
     participantes_sorteio = []
 
     lv = ListView(expand=1,
