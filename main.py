@@ -395,8 +395,8 @@ def router(page:Page):
                     Row(
                         [
                             Image(
-                                height=400,
-                                src="cddv.png",
+                                height=300,
+                                src="sorteio.png",
                                 border_radius=50,
                                 fit=ImageFit.CONTAIN,
                             )
