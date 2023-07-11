@@ -378,7 +378,7 @@ def router(page:Page):
                 [
                     AppBar(
                         leading_width=40,
-                        title=Text("Sorteio CDD", color=colors.WHITE),
+                        title=Text("Home", color=colors.WHITE),
                         center_title=True,
                         bgcolor=colors.BLUE_400),
                     Row(
